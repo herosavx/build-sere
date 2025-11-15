@@ -1,7 +1,7 @@
 name: Build SerenityJS Protocol
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  workflow_dispatch:
 
 jobs:
   build:
@@ -28,12 +28,17 @@ jobs:
           cd serenity
           yarn install --immutable
 
-      - name: Build @serenityjs/protocol
+      - name: Build Protocol + All Dependencies
         run: |
           cd serenity
-          yarn workspace @serenityjs/protocol build
+          yarn turbo run build --filter=@serenityjs/protocol...
 
-      - name: Upload dist/ Artifact
+      - name: Verify TypeScript
+        run: |
+          cd serenity
+          yarn workspace @serenityjs/protocol typecheck
+
+      - name: Upload dist/
         uses: actions/upload-artifact@v4
         with:
           name: protocol-dist
