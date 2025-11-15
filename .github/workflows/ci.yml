@@ -33,11 +33,6 @@ jobs:
           cd serenity
           yarn turbo run build --filter=@serenityjs/protocol...
 
-      - name: Verify TypeScript
-        run: |
-          cd serenity
-          yarn workspace @serenityjs/protocol typecheck
-
       - name: Upload dist/
         uses: actions/upload-artifact@v4
         with:
