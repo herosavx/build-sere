@@ -1,0 +1,41 @@
+name: Build SerenityJS Protocol
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (blank repo)
+        uses: actions/checkout@v4
+
+      - name: Clone SerenityJS
+        run: |
+          git clone https://github.com/SerenityJS/serenity.git
+          cd serenity
+          git checkout main
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
+          cache-dependency-path: serenity/yarn.lock
+
+      - name: Install Dependencies
+        run: |
+          cd serenity
+          yarn install --immutable
+
+      - name: Build @serenityjs/protocol
+        run: |
+          cd serenity
+          yarn workspace @serenityjs/protocol build
+
+      - name: Upload dist/ Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: protocol-dist
+          path: serenity/packages/protocol/dist/
+          retention-days: 30
